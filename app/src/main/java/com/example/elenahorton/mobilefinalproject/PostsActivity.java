@@ -73,7 +73,6 @@ public class PostsActivity extends BaseActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-
         postsAdapter = new PostAdapter(getApplicationContext(), getUid());
         /*RecyclerView recyclerViewPosts = (RecyclerView) findViewById(
                 R.id.recyclerPostList);
