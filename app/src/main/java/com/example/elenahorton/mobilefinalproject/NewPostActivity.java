@@ -4,6 +4,8 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.provider.MediaStore;
@@ -15,17 +17,21 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.io.FileNotFoundException;
+
 /**
  * Created by elladzenitis on 12/9/16.
  */
 public class NewPostActivity extends AppCompatActivity {
 
     public static final int REQUEST_CODE_PHOTO = 101;
+    public static final int REQUEST_CODE_PHOTOGALLERY = 102;
     public static final String KEY_DATA = "data";
     public static final int REQUEST_CODE_PERMS = 101;
     private ImageView ivPhoto;
     private Bitmap imageBitmap = null;
     private Button btnTakePhoto;
+    private Button btnGetPhoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +41,7 @@ public class NewPostActivity extends AppCompatActivity {
         this.setTitle("Create a New Post");
 
         ivPhoto = (ImageView) findViewById(R.id.ivPhoto);
-        btnTakePhoto = (Button) findViewById(R.id.btnPhoto);
+        btnTakePhoto = (Button) findViewById(R.id.btnTakePhoto);
         btnTakePhoto.setEnabled(false);
         btnTakePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -43,6 +49,17 @@ public class NewPostActivity extends AppCompatActivity {
                 Intent intentTakePhoto = new Intent(
                         MediaStore.ACTION_IMAGE_CAPTURE);
                 startActivityForResult(intentTakePhoto, REQUEST_CODE_PHOTO);
+            }
+        });
+
+        btnGetPhoto = (Button) findViewById(R.id.btnGetPhoto);
+        btnGetPhoto.setEnabled(true);
+        btnGetPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentGetPhoto = new Intent(Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intentGetPhoto, REQUEST_CODE_PHOTOGALLERY);
             }
         });
 
@@ -104,13 +121,26 @@ public class NewPostActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode,
-                                    Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_PHOTO) {
             Bundle extras = data.getExtras();
             imageBitmap = (Bitmap) extras.get(KEY_DATA);
 
             ivPhoto.setImageBitmap(imageBitmap);
         }
+        else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_PHOTOGALLERY){
+            Uri targetUri = data.getData();
+            try {
+                imageBitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(targetUri));
+                ivPhoto.setImageBitmap(imageBitmap);
+                System.out.println("GOT THE IMAGE");
+            } catch (FileNotFoundException e) {
+                // Auto-generated catch block
+                e.printStackTrace();
+            }
+
+        }
+
+
     }
 }
