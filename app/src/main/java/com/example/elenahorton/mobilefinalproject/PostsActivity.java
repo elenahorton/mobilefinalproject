@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -31,6 +32,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.elenahorton.mobilefinalproject.adapter.PostAdapter;
+import com.example.elenahorton.mobilefinalproject.adapter.ViewPagerAdapter;
 import com.example.elenahorton.mobilefinalproject.model.Post;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -43,7 +45,8 @@ import com.google.firebase.database.FirebaseDatabase;
 public class PostsActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private PostAdapter postsAdapter;
+    private PostAdapter postsLocAdapter;
+    private PostAdapter postsUserAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +54,7 @@ public class PostsActivity extends BaseActivity
         setContentView(R.layout.activity_posts);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        setupViewPager();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -71,16 +75,15 @@ public class PostsActivity extends BaseActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        postsAdapter = new PostAdapter(getApplicationContext(), getUid());
-        /*RecyclerView recyclerViewPosts = (RecyclerView) findViewById(
-                R.id.recyclerPostList);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        layoutManager.setReverseLayout(true);
-        layoutManager.setStackFromEnd(true);
-        recyclerViewPosts.setLayoutManager(layoutManager);
-        recyclerViewPosts.setAdapter(postsAdapter);*/
+        postsLocAdapter = new PostAdapter(getApplicationContext(), getUid());
+        postsUserAdapter = new PostAdapter(getApplicationContext(), getUid());
 
         initPostsListener();
+    }
+
+    private void setupViewPager() {
+        final ViewPager pager = (ViewPager) findViewById(R.id.pager);
+        pager.setAdapter(new ViewPagerAdapter(getSupportFragmentManager()));
     }
 
     private void initPostsListener() {
@@ -89,7 +92,7 @@ public class PostsActivity extends BaseActivity
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Post newPost = dataSnapshot.getValue(Post.class);
-                postsAdapter.addPost(newPost, dataSnapshot.getKey());
+                postsLocAdapter.addPost(newPost, dataSnapshot.getKey());
             }
 
             @Override
@@ -163,5 +166,12 @@ public class PostsActivity extends BaseActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public PostAdapter getPostsLocAdapter() {
+        return postsLocAdapter;
+    }
+    public PostAdapter getPostsUserAdapter() {
+        return postsUserAdapter;
     }
 }
