@@ -32,6 +32,8 @@ public class NewPostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_post);
 
+        this.setTitle("Create a New Post");
+
         ivPhoto = (ImageView) findViewById(R.id.ivPhoto);
         btnTakePhoto = (Button) findViewById(R.id.btnPhoto);
         btnTakePhoto.setEnabled(false);
