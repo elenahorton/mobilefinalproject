@@ -22,7 +22,6 @@
         app:headerLayout="@layout/nav_header_posts"
         app:menu="@menu/activity_posts_drawer" />
 
-    <?xml version="1.0" encoding="utf-8"?>
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/activity_main"
