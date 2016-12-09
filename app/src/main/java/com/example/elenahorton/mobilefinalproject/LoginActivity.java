@@ -83,8 +83,6 @@ public class LoginActivity extends BaseActivity {
 
     @OnClick(R.id.btnLogin)
     void loginClick() {
-        int num = 6/0;
-
 
         if (!isFormValid()) {
             return;
