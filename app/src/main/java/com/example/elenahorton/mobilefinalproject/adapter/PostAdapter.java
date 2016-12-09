@@ -23,7 +23,24 @@ import java.util.List;
 import com.example.elenahorton.mobilefinalproject.model.Post;
 
 
-public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
+public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
+        implements PostTouchHelperAdapter  {
+
+    @Override
+    public void onItemDismiss(int position) {
+        // delete from Firebase
+        postKeys.remove(position);
+        postList.remove(position);
+        notifyItemRemoved(position);
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public void onItemMove(int fromPosition, int toPosition) {
+        postList.add(toPosition, postList.get(fromPosition));
+        postList.remove(fromPosition);
+        notifyItemMoved(fromPosition, toPosition);
+    }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView tvAuthor;
