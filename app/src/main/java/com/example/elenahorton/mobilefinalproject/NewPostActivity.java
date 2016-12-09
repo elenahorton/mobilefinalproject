@@ -13,8 +13,10 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.io.FileNotFoundException;
@@ -32,6 +34,7 @@ public class NewPostActivity extends AppCompatActivity {
     private Bitmap imageBitmap = null;
     private Button btnTakePhoto;
     private Button btnGetPhoto;
+    private Spinner category_menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +42,7 @@ public class NewPostActivity extends AppCompatActivity {
         setContentView(R.layout.new_post);
 
         this.setTitle("Create a New Post");
+        setupDropdownMenu();
 
         ivPhoto = (ImageView) findViewById(R.id.ivPhoto);
         btnTakePhoto = (Button) findViewById(R.id.btnTakePhoto);
@@ -141,6 +145,14 @@ public class NewPostActivity extends AppCompatActivity {
 
         }
 
+    }
 
+    // sets up spinner menu for options that you are able to select
+    private void setupDropdownMenu() {
+        category_menu = (Spinner) findViewById(R.id.category_menu);
+        ArrayAdapter<CharSequence> adapter =
+                ArrayAdapter.createFromResource(this, R.array.image_category, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        category_menu.setAdapter(adapter);
     }
 }
