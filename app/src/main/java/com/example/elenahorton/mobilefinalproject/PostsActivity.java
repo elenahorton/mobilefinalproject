@@ -59,8 +59,6 @@ public class PostsActivity extends BaseActivity
                 Intent intentNewPost = new Intent();
                 intentNewPost.setClass(PostsActivity.this, NewPostActivity.class);
                 startActivity(intentNewPost);
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
             }
         });
 
