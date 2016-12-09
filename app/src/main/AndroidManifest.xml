@@ -3,6 +3,7 @@
     package="com.example.elenahorton.mobilefinalproject">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA"/>
 
     <application
         android:allowBackup="true"
@@ -19,6 +20,7 @@
         </activity>
         <activity android:name=".LoginActivity" />
         <activity android:name=".BaseActivity" />
+        <activity android:name=".NewPostActivity" />
         <activity
             android:name=".PostsActivity"
             android:label="@string/title_activity_posts"
