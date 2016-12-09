@@ -74,14 +74,14 @@ public class PostsActivity extends BaseActivity
         navigationView.setNavigationItemSelectedListener(this);
 
 
-        postsAdapter = new PostAdapter(getApplicationContext(), getUid());
-        RecyclerView recyclerViewPlaces = (RecyclerView) findViewById(
-                R.id.recyclerPostList);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        layoutManager.setReverseLayout(true);
-        layoutManager.setStackFromEnd(true);
-        recyclerViewPlaces.setLayoutManager(layoutManager);
-        recyclerViewPlaces.setAdapter(postsAdapter);
+//        postsAdapter = new PostAdapter(getApplicationContext(), getUid());
+//        RecyclerView recyclerViewPlaces = (RecyclerView) findViewById(
+//                R.id.recyclerPostList);
+//        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+//        layoutManager.setReverseLayout(true);
+//        layoutManager.setStackFromEnd(true);
+//        recyclerViewPlaces.setLayoutManager(layoutManager);
+//        recyclerViewPlaces.setAdapter(postsAdapter);
 
         initPostsListener();
     }
