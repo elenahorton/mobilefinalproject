@@ -29,12 +29,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         public TextView tvAuthor;
         public TextView tvTitle;
         public TextView tvBody;
+        public Button btnDeletePost;
 
         public ViewHolder(View itemView) {
             super(itemView);
             tvAuthor = (TextView) itemView.findViewById(R.id.tvAuthor);
             tvTitle = (TextView) itemView.findViewById(R.id.tvTitle);
             tvBody = (TextView) itemView.findViewById(R.id.tvBody);
+            btnDeletePost = (Button) itemView.findViewById(R.id.btnDelete);
         }
     }
 
@@ -69,6 +71,17 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         viewHolder.tvAuthor.setText(tmpPost.getAuthor());
         viewHolder.tvTitle.setText(tmpPost.getTitle());
         viewHolder.tvBody.setText(tmpPost.getBody());
+
+        if(uId.equals(tmpPost.getUid())) {
+            //then make it visible
+            viewHolder.btnDeletePost.setVisibility(View.VISIBLE);
+            viewHolder.btnDeletePost.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    removePost(viewHolder.getAdapterPosition());
+                }
+            });
+        }
 
 
         setAnimation(viewHolder.itemView, position);
