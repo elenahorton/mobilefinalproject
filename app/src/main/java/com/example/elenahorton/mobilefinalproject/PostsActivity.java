@@ -75,13 +75,13 @@ public class PostsActivity extends BaseActivity
 
 
         postsAdapter = new PostAdapter(getApplicationContext(), getUid());
-        RecyclerView recyclerViewPlaces = (RecyclerView) findViewById(
+        /*RecyclerView recyclerViewPosts = (RecyclerView) findViewById(
                 R.id.recyclerPostList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setReverseLayout(true);
         layoutManager.setStackFromEnd(true);
-        recyclerViewPlaces.setLayoutManager(layoutManager);
-        recyclerViewPlaces.setAdapter(postsAdapter);
+        recyclerViewPosts.setLayoutManager(layoutManager);
+        recyclerViewPosts.setAdapter(postsAdapter);*/
 
         initPostsListener();
     }
