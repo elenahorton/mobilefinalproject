@@ -10,6 +10,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -159,8 +160,10 @@ public class PostsActivity extends BaseActivity
 //                System.out.println("THIS IS THE KEY: " + dataSnapshot.getKey());
 //                System.out.println("Getting valid locations " + postsLocAdapter.getValidLocations());
                 //postsLocAdapter.addPost(newPost, dataSnapshot.getKey());
-                if (newPost.getAuthor() == FirebaseAuth.getInstance().getCurrentUser().getDisplayName())
+                if (newPost.getAuthor() == FirebaseAuth.getInstance().getCurrentUser().getDisplayName()) {
                     postsUserAdapter.addPost(newPost, dataSnapshot.getKey());
+                    Log.d("TAG_ADDED", "added to user adapter");
+                }
             }
 
             @Override
@@ -170,7 +173,9 @@ public class PostsActivity extends BaseActivity
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                // remove post from adapter
+                postsUserAdapter.removePostByKey(dataSnapshot.getKey());
+                postsLocAdapter.removePostByKey(dataSnapshot.getKey());
+                Log.d("TAG_REMOVED", "removing post");
             }
 
             @Override
