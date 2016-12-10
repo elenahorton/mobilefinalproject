@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -25,10 +26,16 @@ import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.elenahorton.mobilefinalproject.location.PostLocationManager;
 import com.example.elenahorton.mobilefinalproject.model.Post;
+import com.firebase.geofire.GeoFire;
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -54,8 +61,14 @@ public class NewPostActivity extends AppCompatActivity {
     private EditText etDescription;
     private Spinner category_menu;
     private Spinner costRate;
+    private Location postLocation;
 
     private FirebaseStorage storage;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +76,7 @@ public class NewPostActivity extends AppCompatActivity {
         setContentView(R.layout.new_post);
 
         storage = FirebaseStorage.getInstance();
+        postLocation = (Location) getIntent().getParcelableExtra("LOCATION");
 
 
         this.setTitle("Create a New Post");
@@ -88,7 +102,7 @@ public class NewPostActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intentGetPhoto = new Intent(Intent.ACTION_PICK,
-                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(intentGetPhoto, REQUEST_CODE_PHOTOGALLERY);
             }
         });
@@ -108,6 +122,9 @@ public class NewPostActivity extends AppCompatActivity {
         });
 
         requestMyPermissions();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     private void requestMyPermissions() {
@@ -153,7 +170,7 @@ public class NewPostActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
         if (imageBitmap != null) {
-            outState.putParcelable(KEY_DATA,imageBitmap);
+            outState.putParcelable(KEY_DATA, imageBitmap);
         }
         super.onSaveInstanceState(outState, outPersistentState);
     }
@@ -165,8 +182,7 @@ public class NewPostActivity extends AppCompatActivity {
             imageBitmap = (Bitmap) extras.get(KEY_DATA);
 
             ivPhoto.setImageBitmap(imageBitmap);
-        }
-        else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_PHOTOGALLERY){
+        } else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_PHOTOGALLERY) {
             Uri targetUri = data.getData();
             try {
                 imageBitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(targetUri));
@@ -228,7 +244,7 @@ public class NewPostActivity extends AppCompatActivity {
                 Post newPost = new Post(getUid(), getUserName(), etDescription.getText().toString(),
                         category_menu.getItemAtPosition(category_menu.getSelectedItemPosition()).toString(),
                         downloadUrl.toString(),
-                        costRate.getSelectedItemPosition()+1);
+                        costRate.getSelectedItemPosition() + 1, postLocation.getLatitude(), postLocation.getLongitude());
                 FirebaseDatabase.getInstance().getReference().child("posts").child(key).setValue(newPost);
             }
         });
@@ -237,6 +253,12 @@ public class NewPostActivity extends AppCompatActivity {
 
         finish();
         Log.d("UPLOAD", "Successfully uploaded photo");
+    }
+
+    public GeoFire getGeoFireRef() {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReferenceFromUrl("gs://mobile-final-project-30d00.appspot.com");
+        GeoFire geoFire = new GeoFire(ref);
+        return geoFire;
     }
 
     private boolean isFormValid() {
@@ -263,5 +285,45 @@ public class NewPostActivity extends AppCompatActivity {
 
     public String getUserName() {
         return FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "NewPost Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app URL is correct.
+                Uri.parse("android-app://com.example.elenahorton.mobilefinalproject/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(client, viewAction);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "NewPost Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app URL is correct.
+                Uri.parse("android-app://com.example.elenahorton.mobilefinalproject/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(client, viewAction);
+        client.disconnect();
     }
 }
