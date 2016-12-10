@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="300dp"
-    android:layout_height="500dp">
+    android:layout_height="450dp">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -33,18 +33,36 @@
         android:paddingBottom="10dp"
         android:scaleType="fitXY"/>
 
-    <Spinner
-        android:id="@+id/category_menu"
-        android:backgroundTint="@color/colorAccent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="10dp"/>
-
     <EditText
         android:id="@+id/etDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Photo Description"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="5"
+        android:orientation="horizontal">
+
+        <Spinner
+            android:id="@+id/category_menu"
+            android:backgroundTint="@color/colorAccent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:paddingBottom="10dp"/>
+
+        <Spinner
+            android:id="@+id/getCostRating"
+            android:backgroundTint="@color/colorAccent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:paddingBottom="10dp">
+        </Spinner>
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/btnAdd"

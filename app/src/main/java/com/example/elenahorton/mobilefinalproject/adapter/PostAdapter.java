@@ -48,6 +48,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView tvAuthor;
         public TextView tvCategory;
+        public TextView tvCostRating;
         public TextView tvDescription;
         public ImageView imageImage;
         public Button btnDeletePost;
@@ -56,6 +57,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
             super(itemView);
             tvAuthor = (TextView) itemView.findViewById(R.id.tvAuthor);
             tvCategory = (TextView) itemView.findViewById(R.id.tvCategory);
+            tvCostRating = (TextView) itemView.findViewById(R.id.tvCostRating);
             tvDescription = (TextView) itemView.findViewById(R.id.tvDescription);
             imageImage = (ImageView) itemView.findViewById(R.id.imageImage);
             btnDeletePost = (Button) itemView.findViewById(R.id.btnDelete);
@@ -68,6 +70,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
     private String uId;
     private int lastPosition = -1;
     private DatabaseReference postsRef;
+    private String cost;
 
     public PostAdapter(Context context, String uId) {
         this.context = context;
@@ -92,6 +95,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
         Post tmpPost = postList.get(position);
         viewHolder.tvAuthor.setText(tmpPost.getAuthor());
         viewHolder.tvCategory.setText(tmpPost.getCategory());
+
+        if(tmpPost.getCostRating() == 1) cost = "$";
+        else if(tmpPost.getCostRating() == 2) cost = "$$";
+        else cost = "$$$";
+        viewHolder.tvCostRating.setText("Cost rating: "+ cost);
+
         viewHolder.tvDescription.setText(tmpPost.getDescription());
         Glide.with(context).load(tmpPost.getImage()).into(viewHolder.imageImage);
 
