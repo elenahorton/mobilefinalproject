@@ -16,21 +16,23 @@ public class Post {
     private String author;
     private String description;
     private String category;
-    private Bitmap image;
+    private String imageUrl;
     private int costRating;
     private Location location;
 
     public Post() {
     }
 
-    public Post(String uid, String author, String description, String category, Bitmap image, int costRating, Location location) {
+    //temporarily removed location and cost rating
+    public Post(String uid, String author, String description, String category, String imageUrl) {
+//    public Post(String uid, String author, String description, String category, String imgUrl, int costRating, Location location) {
         this.uid = uid;
         this.author = author;
         this.category = category;
         this.description = description;
-        this.image = image;
-        this.costRating = costRating;
-        this.location = location;
+        this.imageUrl = imageUrl;
+//        this.costRating = costRating;
+//        this.location = location;
     }
 
     @Exclude
@@ -40,9 +42,9 @@ public class Post {
         result.put("author", author);
         result.put("description", description);
         result.put("category", category);
-        result.put("image", image);
-        result.put("costRating", costRating);
-        result.put("location", location);
+        result.put("imageUrl", imageUrl);
+//        result.put("costRating", costRating);
+//        result.put("location", location);
         return result;
     }
 
@@ -78,12 +80,12 @@ public class Post {
         this.category = category;
     }
 
-    public Bitmap getImage() {
-        return image;
+    public String getImage() {
+        return imageUrl;
     }
 
-    public void setImage(Bitmap image) {
-        this.image = image;
+    public void setImage(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public int getCostRating() {

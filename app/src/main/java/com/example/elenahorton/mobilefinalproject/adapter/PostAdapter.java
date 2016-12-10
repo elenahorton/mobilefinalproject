@@ -4,6 +4,7 @@ package com.example.elenahorton.mobilefinalproject.adapter;
  * Created by elenahorton on 12/9/16.
  */
 import android.content.Context;
+import android.media.Image;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,8 +12,10 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.elenahorton.mobilefinalproject.R;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -44,15 +47,17 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView tvAuthor;
-        public TextView tvTitle;
-        public TextView tvBody;
+        public TextView tvCategory;
+        public TextView tvDescription;
+        public ImageView imageImage;
         public Button btnDeletePost;
 
         public ViewHolder(View itemView) {
             super(itemView);
             tvAuthor = (TextView) itemView.findViewById(R.id.tvAuthor);
-            tvTitle = (TextView) itemView.findViewById(R.id.tvTitle);
-            tvBody = (TextView) itemView.findViewById(R.id.tvBody);
+            tvCategory = (TextView) itemView.findViewById(R.id.tvCategory);
+            tvDescription = (TextView) itemView.findViewById(R.id.tvDescription);
+            imageImage = (ImageView) itemView.findViewById(R.id.imageImage);
             btnDeletePost = (Button) itemView.findViewById(R.id.btnDelete);
         }
     }
@@ -86,8 +91,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
     public void onBindViewHolder(final ViewHolder viewHolder, final int position) {
         Post tmpPost = postList.get(position);
         viewHolder.tvAuthor.setText(tmpPost.getAuthor());
-        viewHolder.tvTitle.setText(tmpPost.getTitle());
-        viewHolder.tvBody.setText(tmpPost.getBody());
+        viewHolder.tvCategory.setText(tmpPost.getCategory());
+        viewHolder.tvDescription.setText(tmpPost.getDescription());
+        Glide.with(context).load(tmpPost.getImage()).into(viewHolder.imageImage);
 
         if(uId.equals(tmpPost.getUid())) {
             //then make it visible

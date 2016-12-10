@@ -9,17 +9,33 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.elenahorton.mobilefinalproject.model.Post;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
+
+import static android.R.attr.bitmap;
 
 /**
  * Created by elladzenitis on 12/9/16.
@@ -34,16 +50,24 @@ public class NewPostActivity extends AppCompatActivity {
     private Bitmap imageBitmap = null;
     private Button btnTakePhoto;
     private Button btnGetPhoto;
+    private Button btnAdd;
+    private EditText etDescription;
     private Spinner category_menu;
+
+    private FirebaseStorage storage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_post);
 
+        storage = FirebaseStorage.getInstance();
+
+
         this.setTitle("Create a New Post");
         setupDropdownMenu();
 
+        etDescription = (EditText) findViewById(R.id.etDescription);
         ivPhoto = (ImageView) findViewById(R.id.ivPhoto);
         btnTakePhoto = (Button) findViewById(R.id.btnTakePhoto);
         btnTakePhoto.setEnabled(false);
@@ -72,6 +96,14 @@ public class NewPostActivity extends AppCompatActivity {
                     savedInstanceState.getParcelable(KEY_DATA);
             ivPhoto.setImageBitmap(imageBitmap);
         }
+
+        btnAdd = (Button) findViewById(R.id.btnAdd);
+        btnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendPost();
+            }
+        });
 
         requestMyPermissions();
     }
@@ -154,5 +186,70 @@ public class NewPostActivity extends AppCompatActivity {
                 ArrayAdapter.createFromResource(this, R.array.image_category, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
         category_menu.setAdapter(adapter);
+    }
+
+    private void sendPost() {
+        if (!isFormValid()) {
+            return;
+        }
+
+        final String key = FirebaseDatabase.getInstance().getReference().child("posts").push().getKey();
+        StorageReference storageRef = storage.getReferenceFromUrl("gs://mobile-final-project-30d00.appspot.com");
+        String imageName = key + ".jpg";
+        StorageReference imageRef = storageRef.child(imageName);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] imgData = baos.toByteArray();
+
+        UploadTask uploadTask = imageRef.putBytes(imgData);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+                //Add Error message or something
+                Log.d("UPLOAD", "Failed to upload photo");
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                //I'm being lazy and the spinner is not implemented
+                Post newPost = new Post(getUid(), getUserName(), etDescription.getText().toString(), "Cafe",
+                        downloadUrl.toString());
+                FirebaseDatabase.getInstance().getReference().child("posts").child(key).setValue(newPost);
+            }
+        });
+
+        Toast.makeText(this, "Post created", Toast.LENGTH_SHORT).show();
+
+        finish();
+        Log.d("UPLOAD", "Successfully uploaded photo");
+    }
+
+    private boolean isFormValid() {
+        boolean result = true;
+        if (TextUtils.isEmpty(etDescription.getText().toString())) {
+            etDescription.setError("Required");
+            result = false;
+        } else {
+            etDescription.setError(null);
+        }
+
+        if (ivPhoto.getDrawable() == null) {
+            //display and error message
+            result = false;
+        }
+
+        return result;
+    }
+
+    // could probably get these from BaseActivity
+    public String getUid() {
+        return FirebaseAuth.getInstance().getCurrentUser().getUid();
+    }
+
+    public String getUserName() {
+        return FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
     }
 }

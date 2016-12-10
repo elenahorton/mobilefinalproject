@@ -26,13 +26,17 @@
                 android:layout_height="wrap_content" />
 
             <TextView
-                android:id="@+id/tvTitle"
+                android:id="@+id/tvCategory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/tvBody"
+                android:id="@+id/tvDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <ImageView
+                android:id="@+id/imageImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             <Button
