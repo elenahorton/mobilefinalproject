@@ -24,15 +24,15 @@ public class Post {
     }
 
     //temporarily removed location and cost rating
-    public Post(String uid, String author, String description, String category, String imageUrl) {
+    public Post(String uid, String author, String description, String category, String imageUrl, int costRating) {
 //    public Post(String uid, String author, String description, String category, String imgUrl, int costRating, Location location) {
         this.uid = uid;
         this.author = author;
         this.category = category;
         this.description = description;
         this.imageUrl = imageUrl;
-//        this.costRating = costRating;
-//        this.location = location;
+        this.costRating = costRating;
+        this.location = location;
     }
 
     @Exclude
@@ -43,7 +43,7 @@ public class Post {
         result.put("description", description);
         result.put("category", category);
         result.put("imageUrl", imageUrl);
-//        result.put("costRating", costRating);
+        result.put("costRating", costRating);
 //        result.put("location", location);
         return result;
     }

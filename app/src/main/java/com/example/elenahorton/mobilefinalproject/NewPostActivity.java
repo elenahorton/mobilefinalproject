@@ -13,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.MenuPopupWindow;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -20,6 +21,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -34,8 +36,6 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
-
-import static android.R.attr.bitmap;
 
 /**
  * Created by elladzenitis on 12/9/16.
@@ -53,6 +53,7 @@ public class NewPostActivity extends AppCompatActivity {
     private Button btnAdd;
     private EditText etDescription;
     private Spinner category_menu;
+    private Spinner costRate;
 
     private FirebaseStorage storage;
 
@@ -65,7 +66,8 @@ public class NewPostActivity extends AppCompatActivity {
 
 
         this.setTitle("Create a New Post");
-        setupDropdownMenu();
+        setupCategoryMenu();
+        setupCostRatingMenu();
 
         etDescription = (EditText) findViewById(R.id.etDescription);
         ivPhoto = (ImageView) findViewById(R.id.ivPhoto);
@@ -180,12 +182,20 @@ public class NewPostActivity extends AppCompatActivity {
     }
 
     // sets up spinner menu for options that you are able to select
-    private void setupDropdownMenu() {
+    private void setupCategoryMenu() {
         category_menu = (Spinner) findViewById(R.id.category_menu);
         ArrayAdapter<CharSequence> adapter =
                 ArrayAdapter.createFromResource(this, R.array.image_category, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
         category_menu.setAdapter(adapter);
+    }
+
+    private void setupCostRatingMenu() {
+        costRate = (Spinner) findViewById(R.id.getCostRating);
+        ArrayAdapter<CharSequence> adapter =
+                ArrayAdapter.createFromResource(this, R.array.cost_menu, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        costRate.setAdapter(adapter);
     }
 
     private void sendPost() {
@@ -215,8 +225,10 @@ public class NewPostActivity extends AppCompatActivity {
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                 Uri downloadUrl = taskSnapshot.getDownloadUrl();
                 //I'm being lazy and the spinner is not implemented
-                Post newPost = new Post(getUid(), getUserName(), etDescription.getText().toString(), "Cafe",
-                        downloadUrl.toString());
+                Post newPost = new Post(getUid(), getUserName(), etDescription.getText().toString(),
+                        category_menu.getItemAtPosition(category_menu.getSelectedItemPosition()).toString(),
+                        downloadUrl.toString(),
+                        costRate.getSelectedItemPosition()+1);
                 FirebaseDatabase.getInstance().getReference().child("posts").child(key).setValue(newPost);
             }
         });
