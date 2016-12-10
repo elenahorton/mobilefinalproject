@@ -11,6 +11,12 @@
     <string name="filter_posts">Filter Posts</string>
     <string name="filter_by">Filter By</string>
     <string name="filter_posts_foruser">Filter Posts</string>
+    <string name="save">Save</string>
+    <string name="events">Events</string>
+    <string name="nightlife">Nightlife</string>
+    <string name="cafes">Cafes</string>
+    <string name="restaurants">Restaurants</string>
+    <string name="outdoors">Outdoors</string>
 
     <string-array name="image_category">
         <item>Cafes</item>

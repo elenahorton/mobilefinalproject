@@ -20,33 +20,35 @@
     <CheckBox
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Location"
-        android:id="@+id/cbLocation"/>
-    <CheckBox
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Outdoors"
+        android:text="@string/outdoors"
         android:id="@+id/cbOutdoors"/>
     <CheckBox
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Restaurants"
+        android:text="@string/restaurants"
         android:id="@+id/cbRestaurants"/>
     <CheckBox
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Cafes"
+        android:text="@string/cafes"
         android:id="@+id/cbCafes"/>
     <CheckBox
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Nightlife"
+        android:text="@string/nightlife"
         android:id="@+id/cbNightlife"/>
 
     <CheckBox
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Events"
+        android:text="@string/events"
         android:id="@+id/cbEvents"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:id="@+id/btnSave"
+        android:text="@string/save"/>
 
 </LinearLayout>

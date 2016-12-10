@@ -59,6 +59,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 
@@ -66,6 +67,7 @@ public class PostsActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         GoogleApiClient.OnConnectionFailedListener, PostLocationManager.OnLocChanged, GeoQueryEventListener {
 
+    public static final int REQUEST_CODE = 101;
     private PostLocationManager postLocationManager;
     private GoogleApiClient googleApiClient;
     private PostAdapter postsLocAdapter;
@@ -75,6 +77,7 @@ public class PostsActivity extends BaseActivity
     private GeoFire geoFire;
     private GeoQuery geoQuery;
     private Map<String,Marker> markers;
+    private ArrayList<String> filters;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,10 +88,19 @@ public class PostsActivity extends BaseActivity
         setupViewPager();
         setTitle(getString(R.string.activities));
 
-        postsLocAdapter = new PostAdapter(getApplicationContext(), getUid(), 0);
-        postsUserAdapter = new PostAdapter(getApplicationContext(), getUid(), 1);
+        filters = new ArrayList<String>();
+        filters.add("Restaurants");
+        filters.add("Cafes");
+        filters.add("Outdoors");
+        filters.add("Nightlife");
+        filters.add("Events");
+
+        postsLocAdapter = new PostAdapter(getApplicationContext(), getUid(), 0, filters);
+        postsUserAdapter = new PostAdapter(getApplicationContext(), getUid(), 1, filters);
 
         postsLocAdapter.getPostsByLocation();
+
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -106,7 +118,6 @@ public class PostsActivity extends BaseActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-s
         initPostsListener();
         userLocation = new Location("");
         userLocation.setLatitude(0);
@@ -130,7 +141,8 @@ s
     private void startFilterDialog() {
         Intent intentFilter = new Intent();
         intentFilter.setClass(PostsActivity.this, FilterActivity.class);
-        startActivity(intentFilter);
+        intentFilter.putExtra("FILTERS", filters);
+        startActivityForResult(intentFilter, REQUEST_CODE);
     }
 
     private void setupViewPager() {
@@ -217,7 +229,7 @@ s
     @Override
     protected void onStart() {
         super.onStart();
-        postsLocAdapter = new PostAdapter(getApplicationContext(), getUid(), 0);
+        postsLocAdapter = new PostAdapter(getApplicationContext(), getUid(), 0, filters);
         postLocationManager.startLocationMonitoring();
         postsLocAdapter.getPostsByLocation();
     }
@@ -328,5 +340,17 @@ s
     @Override
     public void onGeoQueryError(DatabaseError error) {
 
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            filters = data.getStringArrayListExtra(FilterActivity.KEY_FILTERS);
+            reloadPosts();
+        }
+    }
+
+    private void reloadPosts() {
+        postsLocAdapter.deleteAllItems();
+        postsLocAdapter.setFilters(filters);
     }
 }

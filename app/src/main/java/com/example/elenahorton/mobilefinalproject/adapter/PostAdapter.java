@@ -27,6 +27,7 @@ import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryEventListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -37,6 +38,7 @@ import java.util.List;
 
 import com.example.elenahorton.mobilefinalproject.model.Post;
 import com.example.elenahorton.mobilefinalproject.model.User;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 
@@ -99,15 +101,17 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
     private ArrayList<String> userPosts;
     private ArrayList<String> locationKeys;
     public boolean location_ready;
+    private ArrayList<String> filters;
 
 
-    public PostAdapter(Context context, final String uId, int type) {
+    public PostAdapter(Context context, final String uId, int type, final ArrayList<String> filters) {
         this.context = context;
         this.uId = uId;
         this.postList = new ArrayList<Post>();
         this.postKeys = new ArrayList<String>();
         this.locationKeys = new ArrayList<String>();
         this.type = type;
+        this.filters = filters;
         location_ready = false;
 
         firebaseAuth = FirebaseAuth.getInstance();
@@ -119,19 +123,23 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
 
 //        getPostsByLocation();
 
-        if(this.type == 0){
+        if (this.type == 0) {
             dataRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     System.out.println("LOCATION KEYS: " + locationKeys);
-                    if (locationKeys == null){
+                    if (locationKeys == null) {
                         locationKeys = new ArrayList<String>();
                     }
                     for (int i = 0; i < locationKeys.size(); i++) {
                         System.out.println("ADDING POST");
                         Post post = dataSnapshot.child("posts").child(locationKeys.get(i)).getValue(Post.class);
-                        postList.add(0, post);
-                        notifyItemInserted(0);
+                        Log.d("TAG_FILTERS", filters.toString());
+                        Log.d("TAG_FILTERS", "Category: " + post.getCategory());
+                        if (filters.contains(post.getCategory())) {
+                            postList.add(0, post);
+                            notifyItemInserted(0);
+                        }
                     }
                 }
 
@@ -149,7 +157,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     userPosts = dataSnapshot.child("users").child(uId).getValue(User.class).getUserPosts();
 
-                    if(userPosts == null) {
+                    if (userPosts == null) {
                         userPosts = new ArrayList<>();
                     }
 
@@ -168,9 +176,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
         }
     }
 
-    public void getPostsByLocation(){
+    public void getPostsByLocation() {
         geoFire = new GeoFire(postLocationRef);
-        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(50.000, 50.000), 0.6);
+        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(0.000, 0.000), 0.6);
 //        System.out.println(geoQuery);
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
@@ -179,8 +187,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         Post post = dataSnapshot.child(key).getValue(Post.class);
-                        postList.add(0, post);
-                        notifyItemInserted(0);
+                        Log.d("TAG_FILTERS", filters.toString());
+                        Log.d("TAG_FILTERS", "Category: " + post.getCategory());
+                        if (filters.contains(post.getCategory())) {
+                            postList.add(0, post);
+                            notifyItemInserted(0);
+                        }
                     }
 
                     @Override
@@ -192,22 +204,26 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
 
                 System.out.println("KEY IN RANGE: " + key);
                 locationKeys.add(key);
-                System.out.println("TRYING TO GET LOCATION KEYS "+ locationKeys);
+                System.out.println("TRYING TO GET LOCATION KEYS " + locationKeys);
 
             }
+
             @Override
             public void onKeyExited(String key) {
                 // remove key from list
 
             }
+
             @Override
             public void onKeyMoved(String key, GeoLocation location) {
 
             }
+
             @Override
             public void onGeoQueryReady() {
                 System.out.println("READY NOW");
             }
+
             @Override
             public void onGeoQueryError(DatabaseError error) {
 
@@ -275,6 +291,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
         notifyDataSetChanged();
     }
 
+    public void deleteAllItems() {
+        postList.removeAll(postList);
+        notifyDataSetChanged();
+    }
+
     public void removePost(int index) {
         postsRef.child(postKeys.get(index)).removeValue();
         postList.remove(index);
@@ -291,6 +312,27 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
         }
     }
 
+//    public void reloadPosts(ArrayList<String> filters) {
+//        for (String category : filters) {
+//            Query mQuery = postsRef.orderByChild("category").equalTo(category);
+//           }
+//    }
+
+    public void setFilters(ArrayList<String> filters) {
+        this.filters = filters;
+        postsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                getPostsByLocation();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     private void setAnimation(View viewToAnimate, int position) {
         if (position > lastPosition) {
             Animation animation = AnimationUtils.loadAnimation(context,
@@ -304,7 +346,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
         return userPosts;
     }
 
-    public boolean getLocationReady(){
+    public boolean getLocationReady() {
         return location_ready;
     }
 }
+
