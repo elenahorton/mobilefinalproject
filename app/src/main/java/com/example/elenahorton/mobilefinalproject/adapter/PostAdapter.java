@@ -19,8 +19,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.elenahorton.mobilefinalproject.LocationChecker;
 import com.example.elenahorton.mobilefinalproject.PostViewActivity;
 import com.example.elenahorton.mobilefinalproject.R;
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.GeoQueryEventListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -36,7 +41,7 @@ import com.google.firebase.database.ValueEventListener;
 
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
-        implements PostTouchHelperAdapter {
+        implements PostTouchHelperAdapter, LocationChecker {
 
     @Override
     public void onItemDismiss(int position) {
@@ -52,6 +57,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
         postList.add(toPosition, postList.get(fromPosition));
         postList.remove(fromPosition);
         notifyItemMoved(fromPosition, toPosition);
+    }
+
+    @Override
+    public ArrayList<String> getValidLocations() {
+        return locationKeys;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -82,9 +92,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
     private DatabaseReference usersRef;
     private DatabaseReference dataRef;
     private FirebaseAuth firebaseAuth;
+    private DatabaseReference postLocationRef;
+    private GeoFire geoFire;
     private String cost;
     private int type;
     private ArrayList<String> userPosts;
+    private ArrayList<String> locationKeys;
+    public boolean location_ready;
 
 
     public PostAdapter(Context context, final String uId, int type) {
@@ -92,13 +106,42 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
         this.uId = uId;
         this.postList = new ArrayList<Post>();
         this.postKeys = new ArrayList<String>();
+        this.locationKeys = new ArrayList<String>();
         this.type = type;
+        location_ready = false;
 
         firebaseAuth = FirebaseAuth.getInstance();
 
         postsRef = FirebaseDatabase.getInstance().getReference("posts");
         usersRef = FirebaseDatabase.getInstance().getReference("users");
         dataRef = FirebaseDatabase.getInstance().getReference();
+        postLocationRef = FirebaseDatabase.getInstance().getReference("post_locations");
+
+//        getPostsByLocation();
+
+        if(this.type == 0){
+            dataRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    System.out.println("LOCATION KEYS: " + locationKeys);
+                    if (locationKeys == null){
+                        locationKeys = new ArrayList<String>();
+                    }
+                    for (int i = 0; i < locationKeys.size(); i++) {
+                        System.out.println("ADDING POST");
+                        Post post = dataSnapshot.child("posts").child(locationKeys.get(i)).getValue(Post.class);
+                        postList.add(0, post);
+                        notifyItemInserted(0);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+
 
         if (this.type == 1) {
             dataRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -124,6 +167,55 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
             });
         }
     }
+
+    public void getPostsByLocation(){
+        geoFire = new GeoFire(postLocationRef);
+        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(50.000, 50.000), 0.6);
+//        System.out.println(geoQuery);
+        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+            @Override
+            public void onKeyEntered(final String key, GeoLocation location) {
+                postsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Post post = dataSnapshot.child(key).getValue(Post.class);
+                        postList.add(0, post);
+                        notifyItemInserted(0);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+
+                System.out.println("KEY IN RANGE: " + key);
+                locationKeys.add(key);
+                System.out.println("TRYING TO GET LOCATION KEYS "+ locationKeys);
+
+            }
+            @Override
+            public void onKeyExited(String key) {
+                // remove key from list
+
+            }
+            @Override
+            public void onKeyMoved(String key, GeoLocation location) {
+
+            }
+            @Override
+            public void onGeoQueryReady() {
+                System.out.println("READY NOW");
+            }
+            @Override
+            public void onGeoQueryError(DatabaseError error) {
+
+            }
+
+        });
+    }
+
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
@@ -210,5 +302,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
 
     public ArrayList<String> getUserPosts() {
         return userPosts;
+    }
+
+    public boolean getLocationReady(){
+        return location_ready;
     }
 }
