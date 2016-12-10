@@ -87,6 +87,8 @@ public class PostsActivity extends BaseActivity
         postsLocAdapter = new PostAdapter(getApplicationContext(), getUid(), 0);
         postsUserAdapter = new PostAdapter(getApplicationContext(), getUid(), 1);
 
+        postsLocAdapter.getPostsByLocation();
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,8 +110,9 @@ public class PostsActivity extends BaseActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-
-
+//        while(!postsLocAdapter.getLocationReady()){
+//            ;
+//        }
 
         initPostsListener();
         userLocation = new Location("");
@@ -134,8 +137,9 @@ public class PostsActivity extends BaseActivity
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Post newPost = dataSnapshot.getValue(Post.class);
-                postsLocAdapter.addPost(newPost, dataSnapshot.getKey());
-
+//                System.out.println("THIS IS THE KEY: " + dataSnapshot.getKey());
+//                System.out.println("Getting valid locations " + postsLocAdapter.getValidLocations());
+                //postsLocAdapter.addPost(newPost, dataSnapshot.getKey());
                 if (newPost.getAuthor() == FirebaseAuth.getInstance().getCurrentUser().getDisplayName())
                     postsUserAdapter.addPost(newPost, dataSnapshot.getKey());
             }
@@ -206,7 +210,9 @@ public class PostsActivity extends BaseActivity
     @Override
     protected void onStart() {
         super.onStart();
+        postsLocAdapter = new PostAdapter(getApplicationContext(), getUid(), 0);
         postLocationManager.startLocationMonitoring();
+        postsLocAdapter.getPostsByLocation();
     }
 
     @Override

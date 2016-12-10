@@ -30,6 +30,7 @@ import com.example.elenahorton.mobilefinalproject.location.PostLocationManager;
 import com.example.elenahorton.mobilefinalproject.model.Post;
 import com.example.elenahorton.mobilefinalproject.model.User;
 import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -250,9 +251,15 @@ public class NewPostActivity extends AppCompatActivity {
                         category_menu.getItemAtPosition(category_menu.getSelectedItemPosition()).toString(),
                         downloadUrl.toString(),
                         costRate.getSelectedItemPosition() + 1, postLocation.getLatitude(), postLocation.getLongitude());
+
                 FirebaseDatabase.getInstance().getReference().child("posts").child(key).setValue(newPost);
+
                 userPosts.add(key);
                 FirebaseDatabase.getInstance().getReference().child("users").child(getUid()).child("userPosts").setValue(userPosts);
+
+                GeoFire geoFire = new GeoFire(FirebaseDatabase.getInstance().getReference().child("post_locations"));
+                geoFire.setLocation(key, new GeoLocation(postLocation.getLatitude(), postLocation.getLongitude()));
+
             }
         });
 
