@@ -2,6 +2,12 @@ package com.example.elenahorton.mobilefinalproject.model;
 
 import android.location.Location;
 
+import com.google.firebase.database.Exclude;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by elenahorton on 12/9/16.
  */
@@ -9,14 +15,15 @@ public class User {
 
     private String email;
     private String userName;
-    private Location location;
+    private ArrayList<String> userPosts;
 
     public User(){}
 
     public User(String email, String userName) {
         this.email = email;
         this.userName = userName;
-        this.location = null;
+        this.userPosts = new ArrayList<String>();
+        userPosts.add(null);
     }
 
     public String getEmail() {
@@ -35,10 +42,25 @@ public class User {
         this.userName = userName;
     }
 
-    public Location getLocation() {
-        return location;
+//    public Location getLocation() {
+//        return location;
+//    }
+//    public void setLocation(Location location) {
+//        this.location = location;
+//    }
+
+    public ArrayList<String> getUserPosts() {
+        return userPosts;
     }
-    public void setLocation(Location location) {
-        this.location = location;
+
+    public void setUserPosts(ArrayList<String> userPosts) {
+        this.userPosts = userPosts;
+    }
+
+    @Exclude
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("postList", userPosts);
+        return result;
     }
 }
