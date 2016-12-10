@@ -84,12 +84,16 @@ public class PostsActivity extends BaseActivity
         setSupportActionBar(toolbar);
         setupViewPager();
 
+        postsLocAdapter = new PostAdapter(getApplicationContext(), getUid(), 0);
+        postsUserAdapter = new PostAdapter(getApplicationContext(), getUid(), 1);
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intentNewPost = new Intent();
                 intentNewPost.putExtra("LOCATION", userLocation);
+                intentNewPost.putExtra("USER_POSTS", postsUserAdapter.getUserPosts());
                 intentNewPost.setClass(PostsActivity.this, NewPostActivity.class);
                 startActivity(intentNewPost);
             }
@@ -105,8 +109,7 @@ public class PostsActivity extends BaseActivity
         navigationView.setNavigationItemSelectedListener(this);
 
 
-        postsLocAdapter = new PostAdapter(getApplicationContext(), getUid());
-        postsUserAdapter = new PostAdapter(getApplicationContext(), getUid());
+
 
         initPostsListener();
         userLocation = new Location("");
@@ -132,6 +135,9 @@ public class PostsActivity extends BaseActivity
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Post newPost = dataSnapshot.getValue(Post.class);
                 postsLocAdapter.addPost(newPost, dataSnapshot.getKey());
+
+                if (newPost.getAuthor() == FirebaseAuth.getInstance().getCurrentUser().getDisplayName())
+                    postsUserAdapter.addPost(newPost, dataSnapshot.getKey());
             }
 
             @Override

@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 import com.example.elenahorton.mobilefinalproject.location.PostLocationManager;
 import com.example.elenahorton.mobilefinalproject.model.Post;
+import com.example.elenahorton.mobilefinalproject.model.User;
 import com.firebase.geofire.GeoFire;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -43,6 +44,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 /**
  * Created by elladzenitis on 12/9/16.
@@ -62,6 +64,7 @@ public class NewPostActivity extends AppCompatActivity {
     private Spinner category_menu;
     private Spinner costRate;
     private Location postLocation;
+    private ArrayList<String> userPosts;
 
     private FirebaseStorage storage;
     /**
@@ -76,7 +79,9 @@ public class NewPostActivity extends AppCompatActivity {
         setContentView(R.layout.new_post);
 
         storage = FirebaseStorage.getInstance();
-        postLocation = (Location) getIntent().getParcelableExtra("LOCATION");
+        postLocation = getIntent().getParcelableExtra("LOCATION");
+        userPosts = getIntent().getStringArrayListExtra("USER_POSTS");
+
 
 
         this.setTitle("Create a New Post");
@@ -246,6 +251,8 @@ public class NewPostActivity extends AppCompatActivity {
                         downloadUrl.toString(),
                         costRate.getSelectedItemPosition() + 1, postLocation.getLatitude(), postLocation.getLongitude());
                 FirebaseDatabase.getInstance().getReference().child("posts").child(key).setValue(newPost);
+                userPosts.add(key);
+                FirebaseDatabase.getInstance().getReference().child("users").child(getUid()).child("userPosts").setValue(userPosts);
             }
         });
 
