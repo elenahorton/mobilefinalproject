@@ -8,18 +8,12 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
-    android:background="@color/LIGHTGREEN"
+    android:background="@color/BackgroundBlue"
     tools:context="com.example.elenahorton.mobilefinalproject.SplashActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="22sp"
-        android:gravity="center_horizontal"
-        android:text="@string/welcome_to_travel_activities" />
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
+        android:layout_gravity="center"
         android:id="@+id/imgLogo"/>
 </LinearLayout>

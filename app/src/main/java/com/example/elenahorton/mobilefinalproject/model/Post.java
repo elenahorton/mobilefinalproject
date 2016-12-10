@@ -8,10 +8,11 @@ import android.location.Location;
 
 import com.google.firebase.database.Exclude;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Post {
+public class Post implements Serializable {
     private String uid;
     private String author;
     private String description;
