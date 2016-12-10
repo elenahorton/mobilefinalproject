@@ -106,6 +106,7 @@ public class PostsActivity extends BaseActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+s
         initPostsListener();
         userLocation = new Location("");
         userLocation.setLatitude(0);
