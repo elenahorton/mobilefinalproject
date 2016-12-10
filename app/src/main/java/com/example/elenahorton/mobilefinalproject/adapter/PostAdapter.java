@@ -43,23 +43,23 @@ import com.google.firebase.database.ValueEventListener;
 
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
-        implements PostTouchHelperAdapter, LocationChecker {
+        implements LocationChecker {
 
-    @Override
-    public void onItemDismiss(int position) {
-        // delete from Firebase
-        postKeys.remove(position);
-        postList.remove(position);
-        notifyItemRemoved(position);
-        notifyDataSetChanged();
-    }
+//    @Override
+//    public void onItemDismiss(int position) {
+//        // delete from Firebase
+//        postKeys.remove(position);
+//        postList.remove(position);
+//        notifyItemRemoved(position);
+//        notifyDataSetChanged();
+//    }
 
-    @Override
-    public void onItemMove(int fromPosition, int toPosition) {
-        postList.add(toPosition, postList.get(fromPosition));
-        postList.remove(fromPosition);
-        notifyItemMoved(fromPosition, toPosition);
-    }
+//    @Override
+//    public void onItemMove(int fromPosition, int toPosition) {
+//        postList.add(toPosition, postList.get(fromPosition));
+//        postList.remove(fromPosition);
+//        notifyItemMoved(fromPosition, toPosition);
+//    }
 
     @Override
     public ArrayList<String> getValidLocations() {
@@ -134,10 +134,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
                     for (int i = 0; i < locationKeys.size(); i++) {
                         System.out.println("ADDING POST");
                         Post post = dataSnapshot.child("posts").child(locationKeys.get(i)).getValue(Post.class);
-                        Log.d("TAG_FILTERS", filters.toString());
-                        Log.d("TAG_FILTERS", "Category: " + post.getCategory());
                         if (filters.contains(post.getCategory())) {
-                            postList.add(0, post);
+                            addPost(post, locationKeys.get(i));
                             notifyItemInserted(0);
                         }
                     }
@@ -163,8 +161,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
 
                     for (int i = 0; i < userPosts.size(); i++) {
                         Post post = dataSnapshot.child("posts").child(userPosts.get(i)).getValue(Post.class);
-                        postList.add(0, post);
-                        notifyItemInserted(0);
+                        if (post != null)
+                            addPost(post, userPosts.get(i));
+                        else Log.d("TAG_NULL", "post is null!");
                     }
                 }
 
@@ -187,11 +186,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         Post post = dataSnapshot.child(key).getValue(Post.class);
-                        Log.d("TAG_FILTERS", filters.toString());
-                        Log.d("TAG_FILTERS", "Category: " + post.getCategory());
                         if (filters.contains(post.getCategory())) {
-                            postList.add(0, post);
-                            notifyItemInserted(0);
+                            addPost(post, key);
                         }
                     }
 
@@ -289,26 +285,37 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
         postList.add(place);
         postKeys.add(key);
         notifyDataSetChanged();
+        Log.d("TAG_ADAPTER_ADDED", "removing post with 'addPost'");
     }
 
     public void deleteAllItems() {
         postList.removeAll(postList);
+        postKeys.removeAll(postKeys);
         notifyDataSetChanged();
     }
 
     public void removePost(int index) {
         postsRef.child(postKeys.get(index)).removeValue();
+        postLocationRef.child(postKeys.get(index)).removeValue();
         postList.remove(index);
         postKeys.remove(index);
         notifyItemRemoved(index);
+        notifyDataSetChanged();
+        Log.d("TAG_ADAPTER_REMOVED", "removing post with 'removePost'");
     }
 
     public void removePostByKey(String key) {
         int index = postKeys.indexOf(key);
+        Log.d("TAG_INDEX", Integer.toString(index));
+        Log.d("TAG_LENGTH", "PostList: " + postList.toString());
+        Log.d("TAG_LENGTH", "PostKeys: " + postKeys.toString());
         if (index != -1) {
             postList.remove(index);
             postKeys.remove(index);
             notifyItemRemoved(index);
+            notifyDataSetChanged();
+            Log.d("TAG_LENGTH", "PostList: " + postList.toString());
+            Log.d("TAG_LENGTH", "PostKeys: " + postKeys.toString());
         }
     }
 

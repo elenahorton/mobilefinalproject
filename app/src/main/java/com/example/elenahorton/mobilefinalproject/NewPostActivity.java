@@ -253,8 +253,8 @@ public class NewPostActivity extends AppCompatActivity {
                         costRate.getSelectedItemPosition() + 1, postLocation.getLatitude(), postLocation.getLongitude());
 
                 FirebaseDatabase.getInstance().getReference().child("posts").child(key).setValue(newPost);
-
                 userPosts.add(key);
+                Log.d("TAG_USERPOSTS", "Added to user posts: " + key);
                 FirebaseDatabase.getInstance().getReference().child("users").child(getUid()).child("userPosts").setValue(userPosts);
 
                 GeoFire geoFire = new GeoFire(FirebaseDatabase.getInstance().getReference().child("post_locations"));
