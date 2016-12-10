@@ -5,6 +5,7 @@ package com.example.elenahorton.mobilefinalproject.adapter;
  */
 
 import android.content.Context;
+import android.content.Intent;
 import android.media.Image;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.elenahorton.mobilefinalproject.LocationChecker;
+import com.example.elenahorton.mobilefinalproject.PostViewActivity;
 import com.example.elenahorton.mobilefinalproject.R;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
@@ -225,7 +227,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
 
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, final int position) {
-        Post tmpPost = postList.get(position);
+        final Post tmpPost = postList.get(position);
         viewHolder.tvAuthor.setText(tmpPost.getAuthor());
         viewHolder.tvCategory.setText(tmpPost.getCategory());
 
@@ -247,6 +249,16 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
                 }
             });
         }
+
+        viewHolder.imageImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent showDetails = new Intent();
+                showDetails.putExtra("POST", tmpPost);
+                showDetails.setClass(view.getContext(), PostViewActivity.class);
+                view.getContext().startActivity(showDetails);
+            }
+        });
 
 
         setAnimation(viewHolder.itemView, position);

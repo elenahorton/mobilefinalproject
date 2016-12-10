@@ -7,6 +7,10 @@
 
     <string name="action_settings">Settings</string>
     <string name="welcome_to_travel_activities">Welcome to Travel Activities!</string>
+    <string name="activities">Activities</string>
+    <string name="filter_posts">Filter Posts</string>
+    <string name="filter_by">Filter By</string>
+    <string name="filter_posts_foruser">Filter Posts</string>
 
     <string-array name="image_category">
         <item>Cafes</item>

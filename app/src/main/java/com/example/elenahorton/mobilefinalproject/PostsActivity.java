@@ -83,6 +83,7 @@ public class PostsActivity extends BaseActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setupViewPager();
+        setTitle(getString(R.string.activities));
 
         postsLocAdapter = new PostAdapter(getApplicationContext(), getUid(), 0);
         postsUserAdapter = new PostAdapter(getApplicationContext(), getUid(), 1);
@@ -93,11 +94,7 @@ public class PostsActivity extends BaseActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intentNewPost = new Intent();
-                intentNewPost.putExtra("LOCATION", userLocation);
-                intentNewPost.putExtra("USER_POSTS", postsUserAdapter.getUserPosts());
-                intentNewPost.setClass(PostsActivity.this, NewPostActivity.class);
-                startActivity(intentNewPost);
+                startNewPostActivity();
             }
         });
 
@@ -109,11 +106,6 @@ public class PostsActivity extends BaseActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-//        while(!postsLocAdapter.getLocationReady()){
-//            ;
-//        }
-
         initPostsListener();
         userLocation = new Location("");
         userLocation.setLatitude(0);
@@ -124,6 +116,20 @@ public class PostsActivity extends BaseActivity
         googleApiClient = new GoogleApiClient.Builder(this).addApi(Places.GEO_DATA_API).addApi(Places.PLACE_DETECTION_API).enableAutoManage(this, this).build();
 
 
+    }
+
+    private void startNewPostActivity() {
+        Intent intentNewPost = new Intent();
+        intentNewPost.putExtra("LOCATION", userLocation);
+        intentNewPost.putExtra("USER_POSTS", postsUserAdapter.getUserPosts());
+        intentNewPost.setClass(PostsActivity.this, NewPostActivity.class);
+        startActivity(intentNewPost);
+    }
+
+    private void startFilterDialog() {
+        Intent intentFilter = new Intent();
+        intentFilter.setClass(PostsActivity.this, FilterActivity.class);
+        startActivity(intentFilter);
     }
 
     private void setupViewPager() {
@@ -247,8 +253,9 @@ public class PostsActivity extends BaseActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.action_filter) {
+            startFilterDialog();
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -265,6 +272,11 @@ public class PostsActivity extends BaseActivity
             startActivity(new Intent(this, LoginActivity.class));
             finish();
         }
+
+        if (id == R.id.nav_newPost) {
+            startNewPostActivity();
+        }
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
