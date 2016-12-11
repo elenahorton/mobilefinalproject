@@ -51,7 +51,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:layout_marginBottom="10dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/go_to_this_location"
+            android:textSize="15sp"
+            android:padding="10dp"/>
 
         <fragment
             android:id="@+id/map"
