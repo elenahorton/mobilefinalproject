@@ -1,5 +1,7 @@
 package com.example.elenahorton.mobilefinalproject;
 
+import android.location.Location;
+
 import java.util.ArrayList;
 
 /**
