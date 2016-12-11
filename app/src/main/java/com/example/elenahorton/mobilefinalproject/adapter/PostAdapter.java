@@ -106,6 +106,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
     private Location userLoc;
 
 
+
     public PostAdapter(Context context, final String uId, int type, final ArrayList<String> filters, Location userLoc) {
         this.context = context;
         this.uId = uId;
@@ -252,17 +253,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
 
         viewHolder.tvDescription.setText(tmpPost.getDescription());
         Glide.with(context).load(tmpPost.getImage()).into(viewHolder.imageImage);
+        Log.d("TAG_UID", "UID: " + uId + ", Post: " + tmpPost + ", Post uid: " + tmpPost.getUid());
 
-        if (uId.equals(tmpPost.getUid())) {
-            //then make it visible
-            viewHolder.btnDeletePost.setVisibility(View.VISIBLE);
-            viewHolder.btnDeletePost.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    removePost(viewHolder.getAdapterPosition());
-                }
-            });
-        }
+        setDeletePrivileges(viewHolder, tmpPost);
 
         viewHolder.imageImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -278,24 +271,39 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
         setAnimation(viewHolder.itemView, position);
     }
 
+    private void setDeletePrivileges(final ViewHolder viewHolder, Post tmpPost) {
+        if (uId.equals(tmpPost.getUid())) {
+            //then make it visible
+            viewHolder.btnDeletePost.setVisibility(View.VISIBLE);
+            viewHolder.btnDeletePost.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    removePost(viewHolder.getAdapterPosition());
+                }
+            });
+        } else {
+            viewHolder.btnDeletePost.setVisibility(View.INVISIBLE);
+        }
+    }
+
     @Override
     public int getItemCount() {
         return postList.size();
     }
 
     public void addPost(Post place, String key) {
-        if (type == 0) {
-            if (filters.contains(place.getCategory())) {
+        if (!postKeys.contains(key)) {
+            if (type == 0) {
+                if (filters.contains(place.getCategory())) {
+                    postList.add(place);
+                    postKeys.add(key);
+                    notifyDataSetChanged();
+                }
+            } else {
                 postList.add(place);
                 postKeys.add(key);
                 notifyDataSetChanged();
             }
-        }
-
-        else {
-            postList.add(place);
-            postKeys.add(key);
-            notifyDataSetChanged();
         }
     }
 
