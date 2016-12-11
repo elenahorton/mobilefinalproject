@@ -17,6 +17,7 @@
     <string name="cafes">Cafes</string>
     <string name="restaurants">Restaurants</string>
     <string name="outdoors">Outdoors</string>
+    <string name="sightseeing">Sightseeing</string>
 
     <string-array name="image_category">
         <item>Cafes</item>

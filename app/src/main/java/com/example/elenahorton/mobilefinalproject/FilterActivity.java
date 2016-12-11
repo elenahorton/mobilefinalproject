@@ -26,6 +26,8 @@ public class FilterActivity extends AppCompatActivity {
     CheckBox cbOutdoors;
     @BindView(R.id.cbNightlife)
     CheckBox cbNightlife;
+    @BindView(R.id.cbSightseeing)
+    CheckBox cbSightseeing;
     @BindView(R.id.btnSave)
     Button btnSave;
 
@@ -60,6 +62,8 @@ public class FilterActivity extends AppCompatActivity {
             newFilters.add("Outdoors");
         }if (cbEvents.isChecked()){
             newFilters.add("Events");
+        }if (cbSightseeing.isChecked()){
+            newFilters.add("Sightseeing");
         }
         result.putExtra(KEY_FILTERS, newFilters);
         setResult(RESULT_OK, result);
@@ -77,6 +81,8 @@ public class FilterActivity extends AppCompatActivity {
             cbOutdoors.setChecked(true);
         }if (currentFilters.contains("Nightlife")) {
             cbNightlife.setChecked(true);
+        }if (currentFilters.contains("Sightseeing")) {
+            cbSightseeing.setChecked(true);
         }
     }
 }

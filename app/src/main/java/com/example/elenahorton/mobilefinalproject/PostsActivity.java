@@ -77,7 +77,7 @@ public class PostsActivity extends BaseActivity
     private Circle searchCircle;
     private GeoFire geoFire;
     private GeoQuery geoQuery;
-    private Map<String,Marker> markers;
+    private Map<String, Marker> markers;
     private ArrayList<String> filters;
 
     @Override
@@ -95,9 +95,20 @@ public class PostsActivity extends BaseActivity
         filters.add("Outdoors");
         filters.add("Nightlife");
         filters.add("Events");
+        filters.add("Sightseeing");
 
-        postsLocAdapter = new PostAdapter(getApplicationContext(), getUid(), 0, filters);
-        postsUserAdapter = new PostAdapter(getApplicationContext(), getUid(), 1, filters);
+        initPostsListener();
+        requestNeededPermission();
+
+        postLocationManager = new PostLocationManager(getApplicationContext(), this);
+        googleApiClient = new GoogleApiClient.Builder(this).addApi(Places.GEO_DATA_API).addApi(Places.PLACE_DETECTION_API).enableAutoManage(this, this).build();
+
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        userLocation = postLocationManager.getLocMan().getLastKnownLocation(postLocationManager.getLocMan().GPS_PROVIDER);
+        postsLocAdapter = new PostAdapter(getApplicationContext(), getUid(), 0, filters, userLocation);
+        postsUserAdapter = new PostAdapter(getApplicationContext(), getUid(), 1, filters, userLocation);
 
         postsLocAdapter.getPostsByLocation();
 
@@ -119,14 +130,6 @@ public class PostsActivity extends BaseActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        initPostsListener();
-        userLocation = new Location("");
-        userLocation.setLatitude(0);
-        userLocation.setLongitude(0);
-        requestNeededPermission();
-
-        postLocationManager = new PostLocationManager(getApplicationContext(), this);
-        googleApiClient = new GoogleApiClient.Builder(this).addApi(Places.GEO_DATA_API).addApi(Places.PLACE_DETECTION_API).enableAutoManage(this, this).build();
 
 
     }
@@ -159,7 +162,7 @@ public class PostsActivity extends BaseActivity
                 Post newPost = dataSnapshot.getValue(Post.class);
 //                System.out.println("THIS IS THE KEY: " + dataSnapshot.getKey());
 //                System.out.println("Getting valid locations " + postsLocAdapter.getValidLocations());
-                //postsLocAdapter.addPost(newPost, dataSnapshot.getKey());
+//                postsLocAdapter.addPost(newPost, dataSnapshot.getKey());
                 if (newPost.getAuthor() == FirebaseAuth.getInstance().getCurrentUser().getDisplayName()) {
                     postsUserAdapter.addPost(newPost, dataSnapshot.getKey());
                     Log.d("TAG_ADDED", "added to user adapter");
@@ -234,9 +237,7 @@ public class PostsActivity extends BaseActivity
     @Override
     protected void onStart() {
         super.onStart();
-        postsLocAdapter = new PostAdapter(getApplicationContext(), getUid(), 0, filters);
         postLocationManager.startLocationMonitoring();
-        postsLocAdapter.getPostsByLocation();
     }
 
     @Override
