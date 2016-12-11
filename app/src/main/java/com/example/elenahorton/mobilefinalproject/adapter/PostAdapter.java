@@ -6,6 +6,7 @@ package com.example.elenahorton.mobilefinalproject.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.media.Image;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -102,9 +103,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
     private ArrayList<String> locationKeys;
     public boolean location_ready;
     private ArrayList<String> filters;
+    private Location userLoc;
 
 
-    public PostAdapter(Context context, final String uId, int type, final ArrayList<String> filters) {
+    public PostAdapter(Context context, final String uId, int type, final ArrayList<String> filters, Location userLoc) {
         this.context = context;
         this.uId = uId;
         this.postList = new ArrayList<Post>();
@@ -113,6 +115,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
         this.type = type;
         this.filters = filters;
         location_ready = false;
+        this.userLoc = userLoc;
 
         firebaseAuth = FirebaseAuth.getInstance();
 
@@ -120,8 +123,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
         usersRef = FirebaseDatabase.getInstance().getReference("users");
         dataRef = FirebaseDatabase.getInstance().getReference();
         postLocationRef = FirebaseDatabase.getInstance().getReference("post_locations");
-
-//        getPostsByLocation();
 
         if (this.type == 0) {
             dataRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -177,7 +178,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
 
     public void getPostsByLocation() {
         geoFire = new GeoFire(postLocationRef);
-        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(0.000, 0.000), 0.6);
+        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(userLoc.getLatitude(), userLoc.getLongitude()), 50);
 //        System.out.println(geoQuery);
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
@@ -187,6 +188,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         Post post = dataSnapshot.child(key).getValue(Post.class);
                         if (filters.contains(post.getCategory())) {
+                            Log.d("TAG_ADDING_LOC", "Adding: " + post);
                             addPost(post, key);
                         }
                     }
@@ -282,10 +284,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
     }
 
     public void addPost(Post place, String key) {
-        postList.add(place);
-        postKeys.add(key);
-        notifyDataSetChanged();
-        Log.d("TAG_ADAPTER_ADDED", "removing post with 'addPost'");
+        if (type == 0) {
+            if (filters.contains(place.getCategory())) {
+                postList.add(place);
+                postKeys.add(key);
+                notifyDataSetChanged();
+            }
+        }
+
+        else {
+            postList.add(place);
+            postKeys.add(key);
+            notifyDataSetChanged();
+        }
     }
 
     public void deleteAllItems() {

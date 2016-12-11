@@ -41,6 +41,12 @@
     <CheckBox
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="@string/sightseeing"
+        android:id="@+id/cbSightseeing"/>
+
+    <CheckBox
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="@string/events"
         android:id="@+id/cbEvents"/>
 
