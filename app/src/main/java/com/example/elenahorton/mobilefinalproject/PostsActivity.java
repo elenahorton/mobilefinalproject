@@ -87,7 +87,7 @@ public class PostsActivity extends BaseActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setupViewPager();
-        setTitle(getString(R.string.activities));
+        toolbar.setLogo(R.drawable.app_title);
 
         filters = new ArrayList<String>();
         filters.add("Restaurants");
