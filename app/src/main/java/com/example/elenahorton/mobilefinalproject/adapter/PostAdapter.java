@@ -6,7 +6,6 @@ package com.example.elenahorton.mobilefinalproject.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
 import android.media.Image;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -103,10 +102,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
     private ArrayList<String> locationKeys;
     public boolean location_ready;
     private ArrayList<String> filters;
-    private Location location;
 
 
-    public PostAdapter(Context context, final String uId, int type, final ArrayList<String> filters, Location location) {
+    public PostAdapter(Context context, final String uId, int type, final ArrayList<String> filters) {
         this.context = context;
         this.uId = uId;
         this.postList = new ArrayList<Post>();
@@ -115,7 +113,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
         this.type = type;
         this.filters = filters;
         location_ready = false;
-        this.location = location;
 
         firebaseAuth = FirebaseAuth.getInstance();
 
@@ -180,7 +177,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
 
     public void getPostsByLocation() {
         geoFire = new GeoFire(postLocationRef);
-        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(location.getLatitude(), location.getLongitude()), 50);
+        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(0.000, 0.000), 0.6);
 //        System.out.println(geoQuery);
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override

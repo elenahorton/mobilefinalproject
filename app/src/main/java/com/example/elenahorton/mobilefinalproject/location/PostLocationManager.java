@@ -50,10 +50,6 @@ public class PostLocationManager implements LocationListener {
         }
     }
 
-    public LocationManager getLocationManager(){
-        return locMan;
-    }
-
     @Override
     public void onLocationChanged(Location location) {
         onLocChanged.locationChanged(location);
