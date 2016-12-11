@@ -15,11 +15,29 @@
         android:paddingTop="@dimen/activity_vertical_margin"
         tools:context="com.example.elenahorton.mobilefinalproject.PostViewActivity">
 
-        <TextView
-            android:id="@+id/tvAuthor"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center" />
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="10dp">
+            <TextView
+                android:id="@+id/tvAuthor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvCategoryOne"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_alignParentRight="true"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
 
         <ImageView
             android:id="@+id/image"
@@ -28,16 +46,12 @@
             android:layout_gravity="center" />
 
         <TextView
+            android:padding="10dp"
             android:id="@+id/tvDescriptionOne"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center" />
-
-        <TextView
-            android:id="@+id/tvCategoryOne"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center" />
+            android:layout_gravity="left"
+            android:textSize="18sp" />
 
         <fragment
             android:id="@+id/map"
