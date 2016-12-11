@@ -37,7 +37,7 @@ public class SplashActivity extends AppCompatActivity {
 
     private void setupSplash() {
         ImageView logo = (ImageView) findViewById(R.id.imgLogo);
-        logo.setImageResource(R.drawable.globe);
+        logo.setImageResource(R.drawable.app_logo);
         setupTimer();
         setupAnimation(logo);
     }
