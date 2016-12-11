@@ -52,7 +52,7 @@
                 android:id="@+id/tvAuthor"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
+                android:layout_gravity="center"
                 android:textSize="20sp"
                 android:textStyle="bold"/>
             <TextView
@@ -61,6 +61,7 @@
                 android:id="@+id/tvDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:textSize="18sp"
                 />
             <Button

@@ -46,21 +46,6 @@ import com.google.firebase.database.ValueEventListener;
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
         implements LocationChecker {
 
-//    @Override
-//    public void onItemDismiss(int position) {
-//        // delete from Firebase
-//        postKeys.remove(position);
-//        postList.remove(position);
-//        notifyItemRemoved(position);
-//        notifyDataSetChanged();
-//    }
-
-//    @Override
-//    public void onItemMove(int fromPosition, int toPosition) {
-//        postList.add(toPosition, postList.get(fromPosition));
-//        postList.remove(fromPosition);
-//        notifyItemMoved(fromPosition, toPosition);
-//    }
 
     @Override
     public ArrayList<String> getValidLocations() {
@@ -248,7 +233,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, final int position) {
         final Post tmpPost = postList.get(position);
-        viewHolder.tvAuthor.setText(tmpPost.getAuthor());
+        viewHolder.tvAuthor.setText(tmpPost.getAuthor()+":");
         viewHolder.tvCategory.setText(tmpPost.getCategory());
 
         if (tmpPost.getCostRating() == 1) cost = "$";

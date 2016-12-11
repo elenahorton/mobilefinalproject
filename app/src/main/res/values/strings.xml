@@ -18,6 +18,15 @@
     <string name="restaurants">Restaurants</string>
     <string name="outdoors">Outdoors</string>
     <string name="sightseeing">Sightseeing</string>
+    <string name="go_to_this_location">Go to this location:</string>
+    <string name="about_app">About This Application:</string>
+    <string name="ok">OK</string>
+    <string name="about_info">This application was created by Elena Horton, Ella Dzenitis, and Kyra Maxwell. Travester allows you to view activity posts from users near your location and filter them by category. You can easily share your own activities as well! A traveler should never be bored. Get out and explore!</string>
+    <string name="logout_confirm">Logout Confirmation</string>
+    <string name="are_you_sure">Are you sure you want to logout?</string>
+    <string name="yes">YES</string>
+    <string name="no">NO</string>
+    <string name="shopping">Shopping</string>
 
     <string-array name="image_category">
         <item>Cafes</item>
@@ -26,6 +35,7 @@
         <item>Restaurants</item>
         <item>Sightseeing</item>
         <item>Events</item>
+        <item>Shopping</item>
         <item>Other</item>
     </string-array>
 

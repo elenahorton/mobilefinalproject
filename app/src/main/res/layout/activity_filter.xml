@@ -49,6 +49,11 @@
         android:layout_height="wrap_content"
         android:text="@string/events"
         android:id="@+id/cbEvents"/>
+    <CheckBox
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/shopping"
+        android:id="@+id/cbShopping"/>
 
     <Button
         android:layout_width="wrap_content"

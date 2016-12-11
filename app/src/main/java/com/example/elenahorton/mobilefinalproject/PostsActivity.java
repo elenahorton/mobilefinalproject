@@ -1,5 +1,6 @@
 package com.example.elenahorton.mobilefinalproject;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -10,6 +11,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -96,6 +98,7 @@ public class PostsActivity extends BaseActivity
         filters.add("Nightlife");
         filters.add("Events");
         filters.add("Sightseeing");
+        filters.add("Shopping");
 
         initPostsListener();
         requestNeededPermission();
@@ -287,19 +290,39 @@ public class PostsActivity extends BaseActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_logout) {
-            FirebaseAuth.getInstance().signOut();
-            startActivity(new Intent(this, LoginActivity.class));
-            finish();
+           showConfirmationAlert();
         }
 
         if (id == R.id.nav_newPost) {
             startNewPostActivity();
+        }  if (id == R.id.nav_about) {
+            showHelpInfo();
         }
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+    private void showHelpInfo() {
+        new AlertDialog.Builder(this).setIcon(R.drawable.info).setTitle(R.string.about_app).setMessage(R.string.about_info).setPositiveButton(R.string.ok, null).show();
+    }
+
+    private void showConfirmationAlert() {
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle(R.string.logout_confirm)
+                .setMessage(R.string.are_you_sure)
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        FirebaseAuth.getInstance().signOut();
+                        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                        finish();
+                    }
+                })
+                .setNegativeButton(R.string.no, null).show();
     }
 
     public PostAdapter getPostsLocAdapter() {
