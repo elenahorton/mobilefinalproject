@@ -203,7 +203,7 @@ public class PostsActivity extends BaseActivity
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     android.Manifest.permission.ACCESS_FINE_LOCATION)) {
                 Toast.makeText(PostsActivity.this,
-                        "For Finding Posts Near You", Toast.LENGTH_SHORT).show();
+                        "To Find Posts Near You", Toast.LENGTH_SHORT).show();
             }
 
             ActivityCompat.requestPermissions(this,

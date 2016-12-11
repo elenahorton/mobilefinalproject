@@ -179,8 +179,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>
 
     public void getPostsByLocation() {
         geoFire = new GeoFire(postLocationRef);
-        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(userLoc.getLatitude(), userLoc.getLongitude()), 50);
-//        System.out.println(geoQuery);
+        geoFire = new GeoFire(postLocationRef);
+        GeoQuery geoQuery;
+        if (userLoc == null) {
+            geoQuery = geoFire.queryAtLocation(new GeoLocation(0, 0), 50);
+        } else {
+            geoQuery = geoFire.queryAtLocation(new GeoLocation(userLoc.getLatitude(), userLoc.getLongitude()), 50);
+        }
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(final String key, GeoLocation location) {
